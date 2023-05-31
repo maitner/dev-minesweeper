@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { GAMESTATE } from "./state";
+import { IconReset } from "./icons";
 
 export default function Header( {gameState,handleReset,mineCount,flagCount,timeStampStart,timeStampEnd} ){
     const flags = (mineCount - flagCount);
@@ -29,7 +30,7 @@ export default function Header( {gameState,handleReset,mineCount,flagCount,timeS
 
     return <div className="header">
         <div className="header-flags">{flags}</div>
-        <div className="header-reset"><button onClick={handleReset}>Reset</button></div>
+        <div className="header-reset"><button onClick={handleReset}><IconReset/></button></div>
         <div className="header-time">{time}</div>
     </div>
 }
