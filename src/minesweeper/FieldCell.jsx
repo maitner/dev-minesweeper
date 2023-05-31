@@ -1,5 +1,7 @@
 import { GAMESTATE } from "./state";
 
+import { IconMine, IconFlag  } from "./icons";
+
 export default function FieldCell({field,gameState,handleFieldSweepClick,handleFieldFlagClick}){
 
     let content = "";
@@ -21,19 +23,19 @@ export default function FieldCell({field,gameState,handleFieldSweepClick,handleF
 
     if( field.sweeped ){
         if( field.hasMine ){
-            content = "M";
+            content = <IconMine />;
         } else if ( field.adjacentMines > 0 ) {
             content = field.adjacentMines;
         }
     } else {
         if(field.hasFlag){
-            content = "F"
+            content = <IconFlag />
         }
     }
 
     //when game is finished and player foubnd all mines show mine in every uncleared field
     if( gameState == GAMESTATE.CLEARED && !field.sweeped && field.hasMine ){
-        content = "M";
+        content = <IconMine />;
     }
 
     function handleOnClick(e){
