@@ -1,13 +1,29 @@
-import { useReducer } from 'react';
+import { useReducer, useEffect } from 'react';
 
-import { initalState, reducer } from "./state"
+import { initialState, reducer } from "./state"
 import Fields from "./Fields";
 import Header from './Header';
 
+
+function initalizeGameState(state){
+
+    const storedStateData = localStorage.getItem("minesweeper_state");
+
+    //in a real app, there should be some stored data versioning
+    if(storedStateData){
+        return JSON.parse(storedStateData);
+    }
+
+    return state;
+}
+
 export default function MinesweeperApp() {
 
-    const [state,dispatch] = useReducer( reducer, initalState() );
+    const [state,dispatch] = useReducer( reducer, initialState(), initalizeGameState );
 
+    useEffect(() => {
+        localStorage.setItem("minesweeper_state", JSON.stringify(state));
+    }, [state]);
 
     function handleFieldSweepClick(id){
         dispatch( {type:"field_sweep",fieldId:id} )

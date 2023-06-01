@@ -5,17 +5,22 @@ export const GAMESTATE = {
     DEAD: "dead",
 }
 
-const sizeX = 10;
-const sizeY = 10;
-const mineCount = 10;
+const DEFAULT_SIZE_X = 10;
+const DEFAULT_SIZE_Y = 10;
+const DEFAULT_MINE_COUNT = 10;
 
-export function initalState(){
 
+export function initialState(){
+
+    const sizeX = DEFAULT_SIZE_X;
+    const sizeY = DEFAULT_SIZE_Y;
+    const mineCount = DEFAULT_MINE_COUNT;
+    
     const initalState = {
         sizeX,
         sizeY,
         mineCount,
-        fields: generateEmptyField(),
+        fields: generateEmptyField(sizeX,sizeY),
         gameState: GAMESTATE.NEW,
         timeStampStart: null,
         timeStampEnd: null,
@@ -25,7 +30,7 @@ export function initalState(){
 }
 
 //empty inital state
-export function generateEmptyField(){
+export function generateEmptyField(sizeX,sizeY){
     const fields = [];
     for( let y = 0; y < sizeY; y++ ){
         for( let x = 0; x<sizeX; x++ ){
@@ -44,9 +49,9 @@ export function generateEmptyField(){
 }
 
 //after first click, generate mines and stuff
-export function generateMineField( initalClickFieldId ){
+export function generateMineField( sizeX, sizeY, mineCount, initalClickFieldId ){
 
-    const fields = generateEmptyField();
+    const fields = generateEmptyField(sizeX, sizeY);
 
     const mineIds = [];
 
@@ -61,7 +66,7 @@ export function generateMineField( initalClickFieldId ){
     for( let m of mineIds ){
         fields[m].hasMine = true;
 
-        for( let a of getAdjacentFieldIds(m) ){
+        for( let a of getAdjacentFieldIds(sizeX, sizeY, m) ){
             fields[a].adjacentMines++;
         }
     }
@@ -69,18 +74,18 @@ export function generateMineField( initalClickFieldId ){
     return fields;
 }
 
-export function getFieldCoordinates(id){
+export function getFieldCoordinates(sizeX,sizeY,id){
     const x = id % sizeY;
     const y = (id - x)/sizeY;
     return {x,y}
 }
 
-export function getFieldId(x,y){
+export function getFieldId(sizeX,sizeY, x,y){
     return ( y * sizeY ) + x;
 }
 
-export function getAdjacentFieldIds(id){
-    const {x,y} = getFieldCoordinates(id);
+export function getAdjacentFieldIds(sizeX,sizeY,id){
+    const {x,y} = getFieldCoordinates(sizeX,sizeY,id);
 
     const adjacentIds = [];
 
@@ -89,7 +94,7 @@ export function getAdjacentFieldIds(id){
             if( ix == x && iy == y){
                 continue;
             }
-            adjacentIds.push( getFieldId( ix, iy ) );
+            adjacentIds.push( getFieldId( sizeX, sizeY, ix, iy ) );
         }
     }
 
@@ -121,7 +126,7 @@ export function reducer(state, action){
                 newState = {...newState, 
                     gameState: GAMESTATE.RUNNING,
                     timeStampStart: Date.now(), 
-                    fields: generateMineField(action.fieldId)
+                    fields: generateMineField(state.sizeX, state.sizeY, state.mineCount, action.fieldId)
                 }
             }
 
@@ -152,7 +157,7 @@ export function reducer(state, action){
         break;
 
         case "reset":
-            return initalState();
+            return initialState();
         break;
     }
 
@@ -201,18 +206,18 @@ function reducerCleanFieldSweep(state,fieldId){
         
 
         if( state.fields[fieldId].adjacentMines == 0 ){
-            const {x,y} = getFieldCoordinates( fieldId );
+            const {x,y} = getFieldCoordinates( state.sizeX, state.sizeY, fieldId );
             if( x > 0 ){
-                newState = reducerCleanFieldSweep(newState, getFieldId(x-1,y) );
+                newState = reducerCleanFieldSweep(newState, getFieldId(state.sizeX, state.sizeY, x-1, y) );
             }
             if( y > 0 ){
-                newState = reducerCleanFieldSweep(newState, getFieldId(x,y-1) );
+                newState = reducerCleanFieldSweep(newState, getFieldId(state.sizeX, state.sizeY, x, y-1) );
             }
-            if( x < sizeX - 1){
-                newState = reducerCleanFieldSweep(newState, getFieldId(x + 1,y) );
+            if( x < state.sizeX - 1){
+                newState = reducerCleanFieldSweep(newState, getFieldId(state.sizeX, state.sizeY, x + 1, y) );
             }
-            if( y < sizeY - 1){
-                newState = reducerCleanFieldSweep(newState, getFieldId(x,y+1) );
+            if( y < state.sizeY - 1){
+                newState = reducerCleanFieldSweep(newState, getFieldId(state.sizeX, state.sizeY, x, y+1) );
             }
         }
 
