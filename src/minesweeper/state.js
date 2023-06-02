@@ -5,6 +5,12 @@ export const GAMESTATE = {
     DEAD: "dead",
 }
 
+export const ACTION_TYPES = {
+    FIELD_SWEEP: "field_sweep",
+    FIELD_FLAG: "field_flag",
+    RESET: "reset"
+}
+
 const DEFAULT_SIZE_X = 10;
 const DEFAULT_SIZE_Y = 10;
 const DEFAULT_MINE_COUNT = 10;
@@ -110,7 +116,7 @@ export function reducer(state, action){
 
     switch( action.type ){
         
-        case "field_sweep":
+        case ACTION_TYPES.FIELD_SWEEP:
             if( state.gameState !== GAMESTATE.NEW && state.gameState !== GAMESTATE.RUNNING ){
                 return state;
             }
@@ -136,7 +142,7 @@ export function reducer(state, action){
 
         break;
 
-        case "field_flag":
+        case ACTION_TYPES.FIELD_FLAG:
             if( state.gameState !== GAMESTATE.RUNNING ){
                 return state;
             }
@@ -156,7 +162,7 @@ export function reducer(state, action){
 
         break;
 
-        case "reset":
+        case ACTION_TYPES.RESET:
             return initialState();
         break;
     }
