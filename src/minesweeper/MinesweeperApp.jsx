@@ -1,6 +1,6 @@
 import { useReducer, useEffect } from 'react';
 
-import { initialState, reducer } from "./state"
+import { ACTION_TYPES, initialState, reducer } from "./state"
 import Fields from "./Fields";
 import Header from './Header';
 
@@ -28,15 +28,15 @@ export default function MinesweeperApp() {
     }, [state]);
 
     function handleFieldSweepClick(id){
-        dispatch( {type:"field_sweep",fieldId:id} )
+        dispatch( {type:ACTION_TYPES.FIELD_SWEEP,fieldId:id} )
     }
 
     function handleFieldFlagClick(id){
-        dispatch( {type:"field_flag",fieldId:id} )
+        dispatch( {type:ACTION_TYPES.FIELD_FLAG,fieldId:id} )
     }
 
     function handleReset(id){
-        dispatch( {type:"reset"} )
+        dispatch( {type:ACTION_TYPES.RESET} )
     }
 
     let flagCount = 0;
